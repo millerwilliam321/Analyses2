@@ -1,0 +1,206 @@
+---
+title: "Chocolate"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+---
+
+<script type="text/javascript">
+ function showhide(id) {
+    var e = document.getElementById(id);
+    e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+ }
+</script>
+
+```{r, include=FALSE}
+# Be sure to use your file menus at the top of R-Studio to:
+# "Session -> Set working directory -> To source file location"
+# Then play this chunk and the next one to get the data into R.
+library(mosaic)
+library(car)
+library(DT)
+library(pander)
+library(readr)
+library(xtable)
+library(dplyr)
+library(knitr)
+library(lattice)
+library(devtools)
+choc <- read_csv("../Data/Chocolate.csv")
+```
+
+```{r, eval=FALSE}
+View(choc)
+```
+
+----
+
+<!-- Instructions:
+
+ Use the Chocolate dataset and a Kruskal-Wallis Test(s) to answer an interesting question(s) that you come up with.
+ 
+ About the dataset:
+ 
+  * Company: Name of the company manufacturing the bar.
+
+  * Orig: The specific geo-region of origin for the bar.
+
+  * Review: Date of publication of the review.
+
+  * Cocoa: Cocoa percentage (darkness) of the chocolate bar being reviewed.
+
+  * Location: Manufacturer base country.
+
+  * Rating: Expert rating for the bar.
+      5= Elite (Transcending beyond the ordinary limits)
+      4= Premium (Superior flavor development, character and style)
+      3= Satisfactory(3.0) to praiseworthy(3.75) (well made with special qualities)
+      2= Disappointing (Passable but contains at least one significant flaw)
+      1= Unpleasant (mostly unpalatable)
+
+   * Type: The variety (breed) of cocoa bean used, if provided.
+   
+   * BroadOrig: The broad geo-region of origin for the bean.
+
+Note this dataset and description come from: © 2018 Kaggle Inc for further details visit:
+
+[Kaggle.com](https://www.kaggle.com/rtatman/chocolate-bar-ratings/data)
+
+
+If you want to give your critiquers some ideas about what you have questions on and would like help with, place those details here.-->
+**Comments to Critiquers:** 
+As respectfully as possilbe I urge you not to mark me down because of critiques based on opinion and not actual errors in the document. I will openly admit my critique is far from perfect, however please grade me on those things which pertain to the rubric. Thank you!
+
+
+<!--End your comments to your critiquers before this line.-->
+
+----
+
+<!--Begin writing your Analysis after this point.-->
+
+## Background {.tabset .tabset-fade}
+### Overview  
+
+The Data collected and contained in this analysis is in regardes to chocolate companies, thier locations, the rating of thier choclate and other details. Please refer to the tabs containing the data sets for more consise infromation on dataset. The data contained ranges from 2006 to 2017. 
+
+upon review of the data a question was posed, Does the quality of chocolate increase over time?
+
+The data was then broke into 4 seperate periods; Period 1 from 2006 to 2008; Period 2 from 2009 to 2011; Period 3 from 2012 to 2014; Period 4 from 2014 to 2017. The following is an analysis of the chocolate dataset, with the aim to answer the preposed question. 
+  
+  
+  
+### Period 1 Data
+
+```{r, out.width=300}
+choc$Period <- cut(choc$Review, breaks = 4, labels = c("1", "2", "3", "4"))
+
+d1 <- subset(choc, Period == 1)
+pander(d1, split.tables = Inf)
+
+```
+
+
+### Period 2 Data
+
+```{r, out.width=300}
+
+d2 <- subset(choc, Period == 2)
+pander(d2, split.tables = Inf)
+
+```
+
+
+### Period 3 Data
+
+```{r, out.width=300}
+
+d3 <- subset(choc, Period == 3)
+pander(d3, split.tables = Inf)
+
+```
+
+
+### Period 4 Data
+
+```{r, out.width=300}
+d4 <- subset(choc, Period == 4)
+pander(d4, split.tables = Inf)
+```
+
+
+### Full Dataset 
+
+
+The choc data is shown here in the "wide data format". 
+
+```{r, out.width=300}
+#Show the full width of the "Wide" version of the choc data:
+pander(choc, split.tables = Inf)
+```
+
+
+
+
+
+
+
+## Analysis  
+
+__Hypothesis__  
+$$  
+H_0: \mu_1 = \mu_1 \dots = \mu
+$$
+$$  
+H_a: \mu_i \neq \mu \text{ for at least one } i
+$$
+$$
+\text{Level of Significance} = .05
+$$  
+
+
+
+
+
+
+```{r}
+choc$Period <- cut(choc$Review, breaks = 4, labels = c("1", "2", "3", "4"))
+```  
+
+__Kruskal-Wallis Test__
+```{r}
+pander(kruskal.test(Rating ~ Period, data = choc))
+```  
+
+
+
+From the Kruskal Wallis test we can see through the p-Value which is less than the level of significance, $p = .01826$, that there is at least on period whose mean is different or from a different population than the rest. 
+
+
+```{r}
+boxplot(Rating ~ Period, data = choc, ylab = "Rating of Chocolate Bars", xlab = "Periods", main = "Average Rating of Period", names = c("1  (2006-2008)", "2  (2009-2011)", "3  (2012-2014)", "4 (2015-2017)"), col = "darkslategray3")
+```  
+
+The boxplot shows us that period 1 has a lower mean than the rest of the data.The most interensting information from this plot is how the means of the following 3 periods apear to be the same, as if there was no improvment in chocolate ratings as time goes on.  Below is a table which displays all the summary infromation for each of the periods. 
+
+__Data Summary of Periods__
+```{r}
+pander(favstats(Rating ~ Period, data = choc))
+```  
+
+Through this chart we can see that most things are similar between the last 3 periods including the median (3.25), the max (4), and Q3 (3.5).
+
+
+```{r}
+tabledata <- subset(choc, Rating %in% c(2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5))
+
+counts <- table(tabledata$Period, tabledata$Rating)
+
+barplot(counts, beside = TRUE, legend = rownames(counts), col = c("deepskyblue2", "darkorchid3", "deeppink3", "firebrick2"), xlab = "Ratings", ylab = "Numbers of Ratings", main = "Ratings per Period")
+```
+
+This chart shows how many of each ratings are given in each period. Through the chart we can see that period 4 has the most of the highest rating of 3.5. Demonstrating that over time chocolate has become more consitant in the quality and better than the past, however not the highest quality possible. 
+
+##Interpretation
+
+As shown through the Kruskal-Wallis test with a p-Value of $p = .01826 > \text{Level of Significance}$ there is a period that has a mean different enough from the others to conclude that it is from a different population. Through the box plot we learn that period 1 is different from the rest. With this information we can proceed to question and study the reasoning behind this change in quality, and maybe help us to figure out how to increase the qualities and rating of chocolate in the future. 

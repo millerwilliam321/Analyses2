@@ -1,0 +1,232 @@
+---
+title: "Day Care Fines"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+---
+
+<script type="text/javascript">
+ function showhide(id) {
+    var e = document.getElementById(id);
+    e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+ }
+</script>
+
+```{r, include=FALSE}
+library(mosaic)
+library(DT)
+library(pander)
+library(car)
+library(lattice)
+
+# To get the "late" dataset into your R Console, 
+# you need to go to your file menu of R-Studio and select
+# "Session, Set working directory, To source file location"
+# Then click the green "play" arrow in 
+# the top right corner of this gray R-Chunk. 
+late <- read.csv("../CollegeProjects/Data/late.csv")
+# Then type:
+# > View(late)
+# in your R Console
+```
+
+
+
+----
+
+<!--If you want to give your critiquers some ideas about what you have questions on and would like help with, place those details here.-->
+
+**Comments to Critiquers:** 
+
+
+
+<!--End your comments to your critiquers before this line.-->
+
+----
+
+
+## Background {.tabset .tabset-fade}
+
+### Overview
+<!-- Be sure to add your own background here before beginning the Analysis. -->
+
+In Israel there has been an issue with parents showinf up late to pick up their kids from daycare. The problem this presents is that the later the parents are the longer the teachers have to wait. In order to fix this problem the idea of a fine for late paretns was presented. A 20 week study was done involving two different treatment groups. treatment group one is the control group, where no fine is presented. In treatment group two the parents are fined if they are late picking up thier kids. This study was broken up into 3 periods. Period one from week 1 to 4 there was no fine, it was purely for observation. Period two, from week 5 to week 16, the fine was implemented. Period three from week 17 to 20 the fine was removed, the purpose of this was to see if removing the fine would result in a positive or negative change. The following anaylsis is provided to help show the results of this study. 
+
+
+
+
+<!--End your background before here.-->
+<!--Click the little black arrow to 
+the left to expand/hide these next sections.-->
+### Study Details
+
+<div style="color:#a8a8a8;">
+This background is quoted directly from the article ["A Fine is a Price"](http://rady.ucsd.edu/faculty/directory/gneezy/pub/docs/fine.pdf). 
+</div>
+
+<div style="padding-left:30px; padding-right:30px;">
+
+There are two types of day-care centers in Israel: private and public. A study was conducted in 10 private day-care centers in the city of Haifa from January to June 1998. All of these centers are located in the same part of town, and there is no important difference among them. During the day children are organized into groups according to age, from 1 to 4 years old. Each day-care center is allowed to hold a maximum of 35 children. In some exceptional cases a few additional children are allowed. The fee for each child is NIS 1,400 per month. (The NIS is the New Israeli Shekel.) At the time of the study, a U.S. dollar was worth approximately NIS 3.68, so the fee was about $380 at that time. 
+
+The contract signed at the beginning of the year states that the day-care
+center operates between 0730 and 1600. There is no mention of what happens if parents come late to pick up their children. In particular, before the beginning of the study, there was no fine for coming late. When parents did not come on time, one of the teachers had to wait with the children concerned. Teachers would rotate in this task, which is considered part of the job of a teacher, a fact that is clearly explained when a teacher is hired. Parents rarely came after 1630. 
+
+A natural option [to fix the problem of parents showing up late] is to introduce a fine: every time a parent comes late, [they] will have to pay a fine. Will that reduce the number of parents who come late? If the fine is removed, will things revert back to the way they were originally?
+
+The overall period of the study was 20 weeks. In the first 4 weeks we
+simply recorded the number of parents who arrived late each week. At the
+beginning of the fifth week, we introduced a fine in six of the 10 day-care centers, which had been selected randomly. The announcement of the fine was made with a note posted on the bulletin board of the day-care center. Parents tend to look at this board every day, since important announcements are posted there. The announcement specified that the fine would be NIS 10 for a delay of 10 minutes or more. The fine was per child; thus, if parents had two children in the center and they came late, they had to pay NIS 20. Payment was made to the principal of the day-care center at the end of the month. Since monthly payments are made to the owner during the year, the fines were added to those amounts. The money was paid to the owner, rather then to the teacher who was staying late (and did not get any additional money). The teachers were informed of the fine but not of the study. Registering the names of parents who came late was a common practice in any case.
+
+At the beginning of the seventeenth week, the fine was removed with no explanation. Notice of the cancellation was posted on the board. If parents asked why the fines were removed, the principals were instructed to reply that the fine had been a trial for a limited time and that the results of this trial were now being evaluated.
+
+A comparison with other fines in Israel may give an idea of the size of
+the penalty that was introduced. A fine of NIS 10 is relatively small but not insignificant. In comparison, the fine for illegal parking is NIS 75; the fine for driving through a red light is NIS 1,000 plus penalties; the fine for not collecting the droppings of a dog is NIS 360. For many of these violations, however, detection and enforcement are low or, as in the case of dog dirt, nonexistent in practice. A baby-sitter earns between NIS 15 and NIS 20 per hour. The average gross salary per month in Israel at the time of the study was NIS 5,595.
+
+</div>
+
+
+### The Data (Wide)
+
+
+The `late` Day Care Center data is shown here in the "wide data format". 
+
+```{r, out.width=300}
+#Show the full width of the "Wide" version of the late data:
+pander(late, split.tables = Inf)
+```
+
+
+### The Data (Long)
+
+The `Late` Day Care Center data is shown here in the "long data format".
+
+```{r}
+# This code reshapes the data into "long" format called Late.
+# To get the "Late" dataset into your R Console, 
+# you need to click the green "play" arrow in 
+# the top right corner of this gray R-Chunk. 
+# Then type:
+#   > View(Late)
+# in your R Console
+Late <- reshape(late,
+                varying = paste("Week",1:20, sep=""), 
+                v.names = "No.ofLateChildren",
+                timevar = "Week", 
+                times = 1:20, 
+                idvar = "Center",
+                new.row.names = 1:200,
+                direction = "long")
+pander(Late)
+```
+
+
+ 
+##  
+<!-- You can begin writing again after here.-->
+
+
+
+## Analysis  
+
+We chose to preform a Two-way ANOVA and analyze the following three questions and hypotheses:  
+
+
+1. Does applying the fine reduce the the amount of parents who are late? 
+$$  
+H_0: \mu_c = \mu_f = \mu
+$$
+$$  
+H_0: \mu_i \neq \mu   \text{, when  }
+{i=c, }  \text{  or } {i=f}
+$$  
+
+2) Does the fine effect a change for each time period?
+$$
+H_0: \mu_1 = \mu_2 = \mu_3 = \mu \text{ (refering to period 1, 2, and 3)}
+$$
+$$
+H_a: \mu_i \neq \mu, \text{ when }{i = 1, i=2,\text{ or } i=3}
+$$  
+
+
+3) Does the fine effect the control and the treatment groups across all three time periods?
+
+
+$$
+H_0: \text{The number of late children is the same across all three periods}
+$$  
+
+
+$$
+H_a: \text{The number of late children is different in at least one of the time periods}
+$$  
+The level of significance for the test is as follows:  
+$$
+\text{Level of Significance } = .05
+$$  
+
+
+
+
+
+__Figure 1.1, Figure 1.2 (Left, Right)__
+```{r}
+
+Late$Period <- cut(Late$Week, c(0, 4, 17, 20), labels = c("1", "2", "3"))
+
+aaa <- aov(No.ofLateChildren ~ Period + Treatment + Period:Treatment, data=Late)
+
+pander(summary(aaa))
+
+par(mfrow = c(1,2))
+plot(aaa, which = 1:2, pch = 16)
+
+```    
+
+
+The above graps show us the that the data is normally distributed and that it is okay to preform the Two-Way ANOVA.  
+
+__Figure 2__
+```{r}
+xyplot(No.ofLateChildren ~ Period, data=Late, type=c("p","a"), main="Amount of Children Late Per Period", col= "red1", xlab = "Period", ylab = "No. Of Late Children")
+```  
+
+
+This grapgh shows us the average of parents late picking up thier children for each of the seperate periods. We can see through the graph that each week the average of late parents increases.  
+
+
+__Figure 3__
+```{r}
+xyplot(No.ofLateChildren ~ Treatment, data=Late, type=c("p","a"), main="Significance of Treatment")
+```  
+
+
+This graph compares the average of later students for the seperate treamtens, no fine (control) and the group which was fined. We can see through the graph that the average of late parents is bigger for the fine group.  
+
+
+__Figure 4__
+```{r}
+xyplot(No.ofLateChildren ~ Period, data=Late,groups=Treatment, type=c("p","a"), main="Significance of the Interaction", auto.key=list(corner=c(1,1)), ylab = "No. Of Late Children")
+```  
+
+
+This graph shows us how many parents were late picking up their children for each treatment group and in each period. This shows us that for the conrtrol group as the number of paretns late decreses over the 3 periods, where as the amount of late parents increases over the 3 periods.  
+
+
+
+
+##Interpretation
+
+After reviewing the data there is sufficiant evidence to reject the null hypothesis for each of the three hypotheses presented.  
+
+1) Figure 2 shows us that with over the course of the study, through each period the average amount of late parents increased. This means that applying the fine did not reduce the amount of parents who were late picking up thier children.  
+
+2) Figure 2, and 3 also show us that through each period the amount of students picked up late increases because of the implemented fine. Through the resulting p-Value, $p = 4.275e-12$ we can conclude that the fine is responsible for this change.  
+
+3) Figure 4 shows us that for the control group the amount of parents picking up thier students late decreases across each period. Figure 4 also shows and increase late parents through each period, including even after the fine was removed. 
+
+The results of this study lead us to the conclusion that adding the fine had a negative effect on the amount of late parents, leading to an increase of parents who were late picking up their students. They would be better off without a fine. However this does lead us to further question, if the fine was increase each time a parent was late would this then result in less paretents showing up late? 
+
+
+

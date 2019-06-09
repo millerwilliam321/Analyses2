@@ -1,0 +1,91 @@
+---
+title: "Student Housing Costs"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+    toc: true
+    toc_float: true
+---
+
+```{r, include=FALSE}
+library(mosaic)
+library(DT) # If you get an error stating: 
+            # Error in library(DT): there is no package called 'DT'
+            # You will need to run: install.packages("DT") 
+            # in your Console, then try "Knit HTML" again.
+Rent <- read.csv("../Data/Rent.csv")  
+```
+
+<br />
+
+## Background
+
+Our researh firrm recently was contacted by a cient, Stephanie1. She is a student that will be starting school at BYU-Idaho next semester. Here is a copy of the email request for information that she sent the firm.
+“Hi. My name is Stephanie. I would like to learn about what housing options I have for living at BYU-Idaho next semester. It will be my first semester there, so I would like to find something that is close to campus and around $300 a month in rent. I’m not too picky on roomates, but I would like somewhere that has a lot of people around so I can get to know as many people as possible. Thanks in advance!”
+We pulled the data from the BYU-Idahoousing Website to prepare an Analysis that will answer Stephanie’s questions and give her some recommendations on a few apartments that best meet her criterions above.
+
+<!-- Hint, you should probably subset the Rent dataset to only show the "Approved Women's Housing" since Stephanie won't be interested in Male Housing options. Also, you can edit this background however you wish when completing your analysis. Notice how this text in green doesn't show up in the HTML output because we used the HTML comment tags around this text. --> 
+
+```{r}
+datatable(Rent[,c("Apartment", "Address", "Cost", "Miles2Campus", "WalkMinutes")], options=list(lengthMenu = c(3,10,30)))
+```
+```{r}
+FemaleApts<-
+  Rent %>%
+    filter(Gender!= "M", Cost/4 <= 400, Residents >= 100, Miles2Campus <= .25)
+
+FemaleApts <- subset(Rent, Gender != "M" & Cost/4 <= 400 & Residents >= 100 & Miles2Campus <= .25)
+```
+
+
+## Analysis
+
+We narrowed down the data set which we had by using paramters given by Stephanie to find the answer that shows specifically what Stephanie is interested in. We selected only Female data, complexes with monthly rent less than 300 dollars. We also searhed for complexes with more than 340 residents, and that is less than .1 miles away from campus. After apply these parameters we found that Birch Plaza has proven to be the best fit.
+
+```{r}
+Example2<-
+  Rent %>%
+    filter(Gender!= "M", Cost/4 <= 300, Residents >= 343, Miles2Campus <= .1)
+datatable(Example2[,c("Apartment","Address","Cost","Miles2Campus","WalkMinutes")], options=list(lengthMenu = c(3,10,30)))
+```
+
+The following are plots to help demonstrate the range of ooptions Stephanie has regarding cost vs Residents, and Cost vs Distance to campus.
+
+
+```{r}
+FemaleApts<-
+  Rent %>%
+    filter(Gender!= "M", Cost/4 <= 400, Residents >= 100, Miles2Campus <= .25)
+par(mfrow = c(1,2))
+p1 <- plot(Residents ~ Cost, data = FemaleApts, pch = 16, col = "firebrick", xlab = "Cost Per Semester", ylab = "Residents per Semester", main = "Cost vs Residents")
+p2 <- plot(Miles2Campus ~ Cost, data = FemaleApts, pch = 16, col = "firebrick", xlab = "Cost Per Semester", ylab = "Miles to Campus", main = "Cost vs Distance")
+par(mfrow = c(1,1))
+```
+
+```{r}
+datatable(FemaleApts[,c("Apartment","Address","Cost","Miles2Campus","WalkMinutes")], options=list(lengthMenu = c(3,10,30)))
+```
+
+The table above displays the the top complexes that match the critera in which stephanie has outlined. We narrowed down the data to display apartments which are less than .25 miles from campus, cost around $300 a month, and have a large number of tenants (more than 100). An alternate table is provided below which has brodened our parameters in regards to distance and price to show the alternate options for stephanie, and help give her perspective.
+
+```{r}
+AltFemaleApts<-
+  Rent %>%
+    filter(Gender!="M", Cost > 400, Residents >= 100, Miles2Campus < .5)
+
+datatable(AltFemaleApts[,c("Apartment","Address","Cost","Miles2Campus","WalkMinutes")], options=list(lengthMenu = c(3,10,30)))
+
+```
+
+## Interpretation
+
+Based off of the anylasis provided we feel that the top the best option for Stephanie would be Birch Plaza. This makes sense because of the details specified by stephanie. Birch Plaza is only a 1 minute walk to campus, has over 300 residents, making it a ver social enviornment and providing the opportunity to meet a lot of people. The rent for Birch Plaza is also exactly what stephanie is looking for. Although Birch Plaza fits all the requirements for stephanie it is still advized that she reaches out and goes on tours of these apartments. Though the data looks nice, the complex may not.
+
+
+
+
+
+
+
+[^1]: Note that Stephanie is a fictional character who is based on real experiences of many faculty and staff here at BYU-Idaho.

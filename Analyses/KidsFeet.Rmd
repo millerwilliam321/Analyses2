@@ -1,0 +1,149 @@
+---
+title: "Kids Feet"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+---
+
+```{r, include=FALSE}
+library(mosaic)
+library(DT)
+library(pander)
+library(knitr)
+library(car)
+```
+
+```{r, eval=FALSE, include=FALSE}
+# Run this in your Console to see the data.
+View(KidsFeet)
+?KidsFeet
+```
+
+<!-- Instructions
+
+1. Use the KidsFeet dataset in R to come up with a question that can be answered with a t Test (One Sample, Paired Samples, or Independent Samples).
+
+2. Establish why the question is interesting. State the question in written form as well as with a statistical "null" and "alternative" hypothesis.
+
+3. Clearly answer your question using statistics. Be sure to compute a p-value and provide supporting numerical and graphical summaries. Also be sure to establish whether or not the requirements of your t test have been satisfied. (See the Math 325 Notebook for details.)
+
+-->
+
+##Background
+
+Jared is a consultant working for a shoe making company. A recent push has been made to understand more the variation of childrens feet, specifically between boys and girls. This is to better help the company when it comes to designing comfortable and affordable shoes. Using a dataset collected by statistician Mary C Meyer, regarding 4th grade children, an analysis was conducted to determine the answer to Jareds question. Are boys feet bigger than girls feet because of length or width, or both.   
+
+
+
+##Analysis 
+
+To test to see the differnces in foot size this analysis will be split into two sections, one for foot width, and the other for foot length. In both sections a hypothesis, normalization graphs, and a t.Test will be presented. 
+
+####Foot Width
+
+<div style="float:left;width:400px;">
+
+
+1) Are boys feet bigger because of width?  
+
+$$
+  H_0: \mu_{\text{BoyW}} - \mu_{\text{GirlsW}} = 0
+$$  
+
+
+$$
+  H_a: \mu_{\text{BoyW}} - \mu_{\text{GirlsW}} ≠ 0
+$$  
+
+
+$$
+  \text{Level of Significance} = .05
+$$  
+
+</div>
+<div style="clear:both;"></div>
+
+
+__Testing Normalization of Data__
+```{r,  results='hide'}
+boysfeet <- subset(KidsFeet, sex == "B")
+girlsfeet <- subset(KidsFeet, sex == "G")
+
+par(mfrow = c(1,2))
+qqPlot(boysfeet$width, ylab = "Boys Foot Width", main = "Boys")
+qqPlot(girlsfeet$width, ylab = "Girls Foot Width", main = "Girls" )
+
+```  
+
+This graph represents testing of the nirmalization of the data making sure it fits the requiremnts for an t-Test. From these graphs we can tell the data is normal.  
+
+
+__t-Test Results:__
+```{r}
+pander(t.test(boysfeet$width, girlsfeet$width, mu = 0, alternative = "two.sided", conf.level = .95), use.hyphening = TRUE, split.cells = c(10, 10, 10, 10, 10, 10))
+```  
+
+This chart displays the data from the previous t-Test. With a p-Value of $p = .01117$ can conclude that there is sufficant evidence to reject the null.  
+
+
+
+
+####Foot Length  
+
+
+<div style="float:left;width:400px;">
+
+2) Are boys feet bigger because of Length?  
+
+$$
+  H_0: \mu_{\text{BoyL}} - \mu_{\text{GirlsL}} = 0
+$$  
+
+$$
+  H_a: \mu_{\text{BoyL}} - \mu_{\text{GirlsL}} ≠ 0
+$$  
+
+$$
+                      \text{Level of Significance} = .05
+$$  
+
+
+</div>
+<div style="clear:both;"></div>  
+
+
+__Testing Normalization of Data__  
+
+
+```{r, results='hide'}
+par(mfrow= c(1,2))
+qqPlot(boysfeet$length, ylab = "Boys Foot Length", main = "Boys")
+qqPlot(girlsfeet$length, ylab = "Girls foot Length", main = "Girls")
+
+```  
+
+This graph represents testing of the nirmalization of the data making sure it fits the requiremnts for an t-Test. From these graphs we can tell the data is normal.  
+
+
+__t-Test Results:__
+```{r}
+pander(t.test(boysfeet$length, girlsfeet$length, mu = 0, alternative = "two.sided", conf.level = .95), use.hyphening = TRUE, split.cells = c(10, 10, 10, 10, 10, 10))
+```  
+
+This chart displays the data from the previous t-Test. With a p-Value of $p = .06308$ can conclude that there is insufficant evidence to reject the null.  
+
+
+##Interpretation  
+
+From the above data we can conclude that boys feet are bigger than girls in regards to width, becuase the p-Value of $p = .01117$ is less than the level of significance, $p = .05$. In regards to length, however, the data shows us that there is no difference! $p = .06308 > \text{Level of Significance}$. This is interesting information showing that at the age of these children there is no difference in foot length. Regardless, this does not conclude it is the same with all ages, just this age group. 
+
+
+
+
+
+<!-- Questions: 
+
+How do you creat more space between thing in the rmarkdown?
+Do we make up cenarios for each analysis or do we just write plan and upfront?
+--!>

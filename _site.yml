@@ -1,0 +1,42 @@
+name: "CollegeProjects1"
+navbar:
+  title: "Examples of Complete Analyses"
+  left:
+    - text: "Table of Contents"
+      href: index.html
+    - text: "Analyses: College Projects"
+      menu:
+        - text: "Project: Movies Ratings"
+          href: ./Analyses/WillMovies.html
+        - text: "Project: Student Housing Analysis"
+          href: ./Analyses/StudentHousingII.html
+        - text: "Project: Kids Foot Size"
+          href: ./Analyses/KidsFeet.html
+        - text: "Project: Word Recolloection"
+          href: ./Analyses/RecallingWords.html
+        - text: "Project: Day Care Fines"
+          href: ./Analyses/DayCare.html
+        - text: "Project: Chocolate Ratings"
+          href: ./Analyses/Chocolate.html
+        - text: "Project: Body Weight"
+          href: ./Analyses/BodyWeightSLR.html
+        - text: "Project: Buy Spray Effectiveness"
+          href: ./Analyses/BugSprayWilcoxonRankSum.html
+        - text: "Project: Car Price Depreciation"
+          href: ./Analyses/MySimpleLinearRegression.html
+        - text: "Project: Permutation Tests"
+          href: ./Analyses/MyPermutationTest.html
+        - text: "Project: Logistical Regressions"
+          href: ./Analyses/MyMultipleLogisticRegression.html
+        - text: "Project: Crime Rate"
+          href: ./Analyses/MyCHiSquaredTest.html
+        - text: "Project: Car Price (Multiple Linear Regression"
+          href: ./Analyses/CarPrices.html
+        - text: "Project: Grades and Change Factors"
+          href: ./Analyses/Project1.html
+    - text: "Analyses: Personal Projects"
+      menu:
+        - text: "Personal Projects"
+          href:
+          
+output_dir: '.'
